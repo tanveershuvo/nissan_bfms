@@ -50,7 +50,7 @@
 
 	$result = $conn->query($sql);
 	foreach ($result as $row) {
-		$id = $row['mx'];
+		$mx = $row['mx'];
 	}
 	?>
 	<script>
@@ -58,10 +58,10 @@
 			var dateFormat = "mm/dd/yy",
 				from = $("#from")
 				.datepicker({
-					defaultDate: "+1w",
+					defaultDate: "+2d",
 					changeMonth: true,
 					numberOfMonths: 1,
-					minDate: new Date("<?= $id ?>"),
+					minDate: new Date("<?= $mx ?>"),
 				})
 				.on("change", function() {
 					to.datepicker("option", "minDate", getDate(this));
@@ -103,15 +103,15 @@ if (isset($_POST['add'])) {
 	$result = $conn->query($sql);
 	if ($result->num_rows > 0) {
 		foreach ($result as $row) {
-			$id = $row['mx'];
-			$dr = date('m-d-Y');
-			if ($id < $dr) {
+			$mx = $row['mx'];
+			$dateTimestamp1 = strtotime($mx);
+			$dateTimestamp2 = strtotime($start);
+			if ($dateTimestamp1 < $dateTimestamp2) {
 				$sql = "INSERT INTO season (sea_name,com_id,sea_start_time,sea_end_time,sea_budget) VALUES ('$name','$comID','$start','$end','$budget')";
-
 				$conn->query($sql);
 				echo '<script>window.location.href = "season_details"</script>';
 			} else {
-				echo '<script>alert("Current season ends at ' . "$id" . ' . Select following date to create new season");</script>';
+				echo '<script>alert("Current season ends at ' . "$mx" . ' . Select following date to create new season");</script>';
 			}
 		}
 	}
